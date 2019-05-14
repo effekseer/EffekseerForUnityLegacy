@@ -1,0 +1,45 @@
+LIBRARY
+
+EXPORTS
+  UnityPluginLoad
+  UnityPluginUnload
+  EffekseerInit
+  EffekseerTerm
+  EffekseerGetRenderFunc
+  EffekseerGetRenderFrontFunc
+  EffekseerGetRenderBackFunc
+  EffekseerUpdate
+  EffekseerLoadEffect
+  EffekseerLoadEffectOnMemory
+  EffekseerReleaseEffect
+  EffekseerSetProjectionMatrix
+  EffekseerSetCameraMatrix
+  EffekseerSetStereoRenderingMatrix
+  EffekseerSetBackGroundTexture
+  EffekseerSetRenderSettings
+  EffekseerPlayEffect
+  EffekseerStopAllEffects
+  EffekseerSetPausedToAllEffects
+  EffekseerUpdateHandle
+  EffekseerStopEffect
+  EffekseerStopRoot
+  EffekseerExists
+  EffekseerGetPaused
+  EffekseerSetPaused
+  EffekseerGetShown
+  EffekseerSetShown
+  EffekseerGetSpeed
+  EffekseerSetSpeed
+  EffekseerSetLocation
+  EffekseerSetRotation
+  EffekseerSetScale
+  EffekseerSetAllColor
+  EffekseerSetTargetLocation
+  EffekseerSetTextureLoaderEvent
+  EffekseerSetModelLoaderEvent
+  EffekseerSetSoundLoaderEvent
+  EffekseerSetSoundPlayerEvent
+
+  StartNetwork
+  StopNetwork
+  UpdateNetwork
