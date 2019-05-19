@@ -394,6 +394,11 @@ public class EffekseerSystem : MonoBehaviour
 			break;
 		}
 #endif
+
+//#if (UNITY_WEBGL || UNITY_IOS || UNITY_SWITCH) && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_SWITCH) && !UNITY_EDITOR
+		Plugin.RegisterPlugin();
+#endif
 		// Init effekseer library
 		Plugin.EffekseerInit(effectInstances, maxSquares, reversedDepth, isRightHandledCoordinateSystem);
 

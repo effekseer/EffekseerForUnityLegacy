@@ -5,6 +5,10 @@
 
 #include "EffekseerPluginGL.h"
 
+#ifdef __APPLE__
+#import <TargetConditionals.h>
+#endif
+
 #if _WIN32
 #pragma comment(lib, "opengl32.lib")
 #endif
@@ -13,6 +17,22 @@ using namespace Effekseer;
 using namespace EffekseerPlugin;
 
 #ifndef _WIN32
+
+// for static
+typedef void(UNITY_INTERFACE_API* PluginLoadFunc)(IUnityInterfaces* unityInterfaces);
+typedef void(UNITY_INTERFACE_API* PluginUnloadFunc)();
+
+extern "C" void UnityRegisterRenderingPlugin(PluginLoadFunc loadPlugin, PluginUnloadFunc unloadPlugin);
+extern "C" void UnityRegisterRenderingPluginV5(PluginLoadFunc loadPlugin, PluginUnloadFunc unloadPlugin);
+
+extern "C"
+{
+    // Unity plugin load event
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API UnityPluginLoad(IUnityInterfaces* unityInterfaces);
+    
+    // Unity plugin unload event
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API UnityPluginUnload();
+}
 
 namespace EffekseerPlugin
 {
@@ -96,12 +116,33 @@ namespace EffekseerPlugin
 
 extern "C"
 {
+    static bool g_IsEffekseerPluginRegistered = false;
+    
+    UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API RegisterPlugin()
+    {
+        if (g_IsEffekseerPluginRegistered)
+            return;
+        
+#if (defined(__APPLE__) && (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR))
+        printf("Info : Register Apple.\n");
+        UnityRegisterRenderingPluginV5(UnityPluginLoad, UnityPluginUnload);
+#elif defined(EMSCRIPTEN) || defined(_SWITCH)
+        printf("Info : Register Other.\n");
+        UnityRegisterRenderingPlugin(UnityPluginLoad, UnityPluginUnload);
+#else
+        printf("Warning : Check preprocesser.\n");
+#endif
+        
+        g_IsEffekseerPluginRegistered = true;
+    }
+    
 	// Unity plugin load event
-	void UNITY_API UnityPluginLoad(IUnityInterfaces* unityInterfaces)
+	UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API UnityPluginLoad(IUnityInterfaces* unityInterfaces)
 	{
 		g_UnityInterfaces = unityInterfaces;
 		g_UnityGraphics = g_UnityInterfaces->Get<IUnityGraphics>();
-
+        g_UnityRendererType = g_UnityGraphics->GetRenderer();
+        
 		g_UnityGraphics->RegisterDeviceEventCallback(OnGraphicsDeviceEvent);
 
 		// Run OnGraphicsDeviceEvent(initialize) manually on plugin load
@@ -110,7 +151,7 @@ extern "C"
 	}
 
 	// Unity plugin unload event
-	void UNITY_API UnityPluginUnload()
+	UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API UnityPluginUnload()
 	{
 		g_UnityGraphics->UnregisterDeviceEventCallback(OnGraphicsDeviceEvent);
 	}
