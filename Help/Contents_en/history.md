@@ -1,5 +1,8 @@
 ﻿# Release notes
 
+## 1.43c
+- Fixed a crash on OpenGL ES3.0 in iOS
+
 ## 1.43b
 - Fixed a bug that multithread rendering crashes an applications
 
